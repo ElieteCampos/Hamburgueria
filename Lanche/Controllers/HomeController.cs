@@ -1,8 +1,8 @@
 using System.Diagnostics;
-using Lanche.Models;
+using LanchesMac.Models;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Lanche.Controllers
+namespace LanchesMac.Controllers
 {
     public class HomeController : Controller
     {     

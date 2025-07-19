@@ -1,4 +1,4 @@
-namespace Lanche.Models
+namespace LanchesMac.Models
 {
     public class ErrorViewModel
     {
