@@ -7,5 +7,6 @@ namespace LanchesMac.ViewModels
         public CarrinhoCompra CarrinhoCompra { get; set; }
         public decimal CarrinhoCompraTotal { get; set; }
 
+
     }
 }
