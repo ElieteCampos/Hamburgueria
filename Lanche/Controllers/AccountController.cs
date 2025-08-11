@@ -72,17 +72,13 @@ namespace LanchesMac.Controllers
 
                 if (result.Succeeded)
                 {
-                   // await _signInManager.SignInAsync(user, isPersistent: false);
+                    //await _signInManager.SignInAsync(user, isPersistent: false);
                     await _userManager.AddToRoleAsync(user, "Member");
                     return RedirectToAction("Login", "Account");
                 }
                 else
                 {
-                    foreach(var erro in result.Errors)
-                    {
-                        this.ModelState.AddModelError("Registro", erro.Description);
-                    }
-                    
+                    this.ModelState.AddModelError("Registro", "Falha ao registrar o usuário");
                 }
             }
             return View(registroVM);
@@ -102,13 +98,5 @@ namespace LanchesMac.Controllers
         {
             return View();
         }
-        
-        //public ActionResult Login()
-        //{
-        //    return View();
-        //}
     }
 }
-
-
-
