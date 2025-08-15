@@ -4,13 +4,12 @@ using LanchesMac.Models;
 using LanchesMac.Repositories;
 using LanchesMac.Repositories.Interfaces;
 using LanchesMac.Services;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using ReflectionIT.Mvc.Paging;
 
 namespace LanchesMac;
-
 public class Startup
 {
     public Startup(IConfiguration configuration)
@@ -20,44 +19,41 @@ public class Startup
 
     public IConfiguration Configuration { get; }
 
-    // This method gets called by the runtime. Use this method to add services to the container.
     public void ConfigureServices(IServiceCollection services)
     {
         services.AddDbContext<AppDbContext>(options =>
-        options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
         services.AddIdentity<IdentityUser, IdentityRole>()
-            .AddEntityFrameworkStores<AppDbContext>()
-            .AddDefaultTokenProviders();
+             .AddEntityFrameworkStores<AppDbContext>()
+             .AddDefaultTokenProviders();
 
-        services.ConfigureApplicationCookie(options => options.AccessDeniedPath = "/Home/AccessDenied");
         services.Configure<ConfigurationImagens>(Configuration.GetSection("ConfigurationPastaImagens"));
 
         //services.Configure<IdentityOptions>(options =>
         //{
-        //    //default password settings define tipo de senha
-        //    options.Password.RequireDigit = true;
-        //    options.Password.RequireLowercase = true;
-        //    options.Password.RequireUppercase = true;
-        //    options.Password.RequireNonAlphanumeric = true;
-        //    options.Password.RequiredLength = 6;
+        //    // Default Password settings.
+        //    options.Password.RequireDigit = false;
+        //    options.Password.RequireLowercase = false;
+        //    options.Password.RequireNonAlphanumeric = false;
+        //    options.Password.RequireUppercase = false;
+        //    options.Password.RequiredLength = 3;
         //    options.Password.RequiredUniqueChars = 1;
         //});
 
         services.AddTransient<ILancheRepository, LancheRepository>();
         services.AddTransient<ICategoriaRepository, CategoriaRepository>();
         services.AddTransient<IPedidoRepository, PedidoRepository>();
-
         services.AddScoped<ISeedUserRoleInitial, SeedUserRoleInitial>();
         services.AddScoped<RelatorioVendasService>();
 
-
         services.AddAuthorization(options =>
         {
-            options.AddPolicy("Admin", politica =>
-            {
-                politica.RequireRole("Admin");
-            });
+            options.AddPolicy("Admin",
+                politica =>
+                {
+                    politica.RequireRole("Admin");
+                });
         });
 
         services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
@@ -65,20 +61,23 @@ public class Startup
 
         services.AddControllersWithViews();
 
-
-        //config serviços paging no startup
         services.AddPaging(options =>
         {
-            options.ViewName = "Bootstrap5";
+            options.ViewName = "Bootstrap4";
             options.PageParameterName = "pageindex";
         });
 
         services.AddMemoryCache();
+        //services.AddDistributedMemoryCache();
+
         services.AddSession();
-        
+        //{
+        //    options.IdleTimeout = TimeSpan.FromSeconds(10);
+        //    options.Cookie.HttpOnly = true;
+        //    options.Cookie.IsEssential = true;
+        //});
     }
 
-    // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
     public void Configure(IApplicationBuilder app,
         IWebHostEnvironment env, ISeedUserRoleInitial seedUserRoleInitial)
     {
@@ -89,7 +88,6 @@ public class Startup
         else
         {
             app.UseExceptionHandler("/Home/Error");
-            // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
             app.UseHsts();
         }
         app.UseHttpsRedirection();
@@ -97,23 +95,22 @@ public class Startup
         app.UseStaticFiles();
         app.UseRouting();
 
-        //cria os perfils
+        //cria os perfis
         seedUserRoleInitial.SeedRoles();
-        //cria os usuarios e atribui ao perfil
+        //cria os usuários e atribui ao perfil
         seedUserRoleInitial.SeedUsers();
-
 
         app.UseSession();
 
         app.UseAuthentication();
         app.UseAuthorization();
 
+
         app.UseEndpoints(endpoints =>
         {
             endpoints.MapControllerRoute(
-                    name: "areas",
-                    pattern: "{area:exists}/{controller=Admin}/{action=Index}/{id?}"
-                  );
+             name: "areas",
+             pattern: "{area:exists}/{controller=Admin}/{action=Index}/{id?}");
 
             endpoints.MapControllerRoute(
                name: "categoriaFiltro",
@@ -126,4 +123,3 @@ public class Startup
         });
     }
 }
-
