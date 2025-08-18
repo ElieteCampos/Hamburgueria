@@ -18,17 +18,17 @@ namespace LanchesMac.Areas.Admin.Controllers
             return Json(lanchesVendasTotais);
         }
         [HttpGet] //esse calcula as vendas dos 360 dias
-        public IActionResult Index(int dias)
+        public IActionResult Index()
         {
             return View();
         }
         [HttpGet] //esse calcula as vendas mensais
-        public IActionResult VendasMensal(int dias)
+        public IActionResult VendasMensal()
         {
             return View();
         }
         [HttpGet]// esse calcula vendas semanais
-        public IActionResult VendasSemanal(int dias)
+        public IActionResult VendasSemanal()
         {
             return View();
         }
