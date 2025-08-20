@@ -28,10 +28,6 @@ O foco é praticar **CRUD, autenticação/autorização, upload de imagens, rela
 
 ---
 
-## 📂 Estrutura
-
----
-
 ## ▶️ Execução
 1. Configure `appsettings.json` com sua connection string do SQL Server.  
 2. Rode as migrations:  
